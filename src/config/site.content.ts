@@ -2,72 +2,94 @@ import type { TaskKey } from '@/lib/site-config'
 
 export const siteContent = {
   navbar: {
-    tagline: 'Article platform',
+    tagline: 'Ideas worth publishing',
+    centerLinks: [
+      { label: 'Homepage', href: '/' },
+      { label: 'News', href: '/articles' },
+      { label: 'About us', href: '/about' },
+      { label: 'Contact', href: '/contact' },
+    ],
+    submitCta: { label: 'Submit article', href: '/dashboard/articles/new' },
   },
   footer: {
-    tagline: 'Article platform',
+    tagline: 'Independent publishing for modern readers',
+    ctaTitle: 'Get in touch',
+    ctaDescription: 'Questions about submissions, partnerships, or editorial standards—we read every note.',
+    ctaButton: { label: 'Contact the desk', href: '/contact' },
   },
   hero: {
-    badge: 'Latest stories and visuals',
-    title: ['A thoughtful home for', 'stories, visuals, and discovery.'],
-    description: 'A Article site for Aidteck, built for clean discovery and structured publishing.',
+    badge: 'Open submissions · Peer-reviewed tone',
+    title: ['Submit your article and', 'join our network'],
+    description:
+      'Aidteck is a calm, reader-first magazine surface for analysis, reporting, and long-form essays—built for clarity, not clutter.',
     primaryCta: {
-      label: 'Read latest posts',
-      href: '/articles',
+      label: 'Submit article',
+      href: '/dashboard/articles/new',
     },
     secondaryCta: {
-      label: 'Explore visuals',
-      href: '/images',
+      label: 'Browse news',
+      href: '/articles',
     },
-    searchPlaceholder: 'Search stories, visuals, listings, and more',
+    searchPlaceholder: 'Search articles, topics, and authors',
     focusLabel: 'Focus',
-    featureCardBadge: 'latest cover rotation',
-    featureCardTitle: 'Latest posts shape the visual identity of the homepage.',
+    featureCardBadge: 'Cover rotation',
+    featureCardTitle: 'Fresh stories set the tone of the homepage.',
     featureCardDescription:
-      'Recent images and stories stay at the center of the experience without changing any core platform behavior.',
+      'The lead story and supporting picks refresh often so returning readers always see something new—without changing how content is stored or delivered.',
   },
   home: {
     metadata: {
-      title: 'Stories, visuals, and discoverable content',
-      description: 'A Article site for Aidteck, built for clean discovery and structured publishing.',
-      openGraphTitle: 'Stories, visuals, and discoverable content',
+      title: 'Aidteck — articles, analysis, and long-form reporting',
+      description:
+        'An editorial network for thoughtful articles: news, advice, and in-depth stories with generous typography and a calm reading rhythm.',
+      openGraphTitle: 'Aidteck — articles and independent journalism',
       openGraphDescription:
-        'Discover articles, visual posts, and connected content through a calmer reading-first experience.',
-      keywords: ['story platform', 'article site', 'visual content', 'content discovery'],
+        'Read and submit long-form articles on Aidteck. A mint-and-ink editorial experience focused on clarity and craft.',
+      keywords: ['Aidteck', 'articles', 'editorial', 'long-form', 'independent publishing', 'news'],
     },
-    introBadge: 'About the platform',
-    introTitle: 'Built for reading, browsing, and connecting different kinds of content.',
+    introBadge: 'Why Aidteck',
+    introTitle: 'A single lane for serious reading—no marketplace noise.',
     introParagraphs: [
-      'This site brings together article-style reading, visual browsing, and structured discovery so visitors can move naturally between different content types.',
-      'Instead of separating stories, visuals, and supporting resources into disconnected surfaces, the platform keeps them connected in one place with consistent navigation and easier exploration.',
-      'Whether someone starts with a story, an image-led post, a listing, or a resource page, they can keep discovering related content without friction.',
+      'Aidteck is tuned for essays, explainers, and reported pieces. The layout borrows from print magazines: strong headlines, confident whitespace, and imagery that supports the story.',
+      'Everything here is article-shaped. You will not find classifieds, listings, or social feeds competing for attention in the main navigation—just publishing, discovery, and contact.',
+      'Whether you are browsing on a phone or a large display, the rhythm stays consistent: readable line lengths, soft motion, and clear hierarchy.',
     ],
     sideBadge: 'At a glance',
     sidePoints: [
-      'Reading-first homepage with stronger emphasis on stories and imagery.',
-      'Connected sections for articles, visuals, listings, and supporting resources.',
-      'Cleaner browsing rhythm designed to make exploration feel easier.',
-      'Lightweight interactions that keep the experience fast and readable.',
+      'Editorial hero with collage imagery and a clear submit path.',
+      'Popular works strip with author-forward presentation.',
+      'Category filters that deep-link into the news index without extra JavaScript.',
+      'Lightweight CSS motion—no heavy animation libraries.',
     ],
     primaryLink: {
-      label: 'Browse articles',
+      label: 'Browse all articles',
       href: '/articles',
     },
     secondaryLink: {
-      label: 'See visuals',
-      href: '/images',
+      label: 'About the publication',
+      href: '/about',
     },
+    popularWorksTitle: 'Popular works',
+    newPublishedTitle: 'New published articles',
+    categoryTabAll: 'All categories',
+    popularAuthors: [
+      { name: 'Nina Park', initials: 'NP' },
+      { name: 'Jordan Avery', initials: 'JA' },
+      { name: 'Sam Okonkwo', initials: 'SO' },
+      { name: 'Riley Chen', initials: 'RC' },
+    ],
   },
   cta: {
-    badge: 'Start exploring',
-    title: 'Explore articles, visuals, and resources through one connected experience.',
-    description: 'A Article site for Aidteck, built for clean discovery and structured publishing.',
+    badge: 'Read with intention',
+    title: 'One destination for articles—crafted like a magazine, delivered on the web.',
+    description:
+      'Submit drafts, explore the archive, or reach the team. Aidteck keeps the surface editorial so the writing stays central.',
     primaryCta: {
-      label: 'Read latest posts',
+      label: 'Open the archive',
       href: '/articles',
     },
     secondaryCta: {
-      label: 'Contact Sales',
+      label: 'Contact',
       href: '/contact',
     },
   },
@@ -77,32 +99,32 @@ export const siteContent = {
 
 export const taskPageMetadata: Record<Exclude<TaskKey, 'comment' | 'org' | 'social'>, { title: string; description: string }> = {
   article: {
-    title: 'Articles and stories',
-    description: 'A Article site for Aidteck, built for clean discovery and structured publishing.',
+    title: 'News & articles',
+    description: 'Browse reporting, essays, and explainers from Aidteck—organized for comfortable reading.',
   },
   listing: {
     title: 'Listings and discoverable pages',
-    description: 'A Article site for Aidteck, built for clean discovery and structured publishing.',
+    description: 'Structured discovery pages when enabled for this deployment.',
   },
   classified: {
     title: 'Classifieds and announcements',
-    description: 'A Article site for Aidteck, built for clean discovery and structured publishing.',
+    description: 'Short-form notices when enabled for this deployment.',
   },
   image: {
     title: 'Images and visual posts',
-    description: 'A Article site for Aidteck, built for clean discovery and structured publishing.',
+    description: 'Visual-first posts when enabled for this deployment.',
   },
   profile: {
     title: 'Profiles and public pages',
-    description: 'A Article site for Aidteck, built for clean discovery and structured publishing.',
+    description: 'Identity and profile surfaces when enabled for this deployment.',
   },
   sbm: {
     title: 'Curated links and saved resources',
-    description: 'A Article site for Aidteck, built for clean discovery and structured publishing.',
+    description: 'Bookmark-style resources when enabled for this deployment.',
   },
   pdf: {
     title: 'PDFs and downloadable resources',
-    description: 'A Article site for Aidteck, built for clean discovery and structured publishing.',
+    description: 'Document library when enabled for this deployment.',
   },
 }
 
@@ -119,21 +141,21 @@ export const taskIntroCopy: Record<
     ],
     links: [
       { label: 'Read articles', href: '/articles' },
-      { label: 'Explore classifieds', href: '/classifieds' },
-      { label: 'View profiles', href: '/profile' },
+      { label: 'About Aidteck', href: '/about' },
+      { label: 'Contact', href: '/contact' },
     ],
   },
   article: {
     title: 'Articles, stories, and long-form reading',
     paragraphs: [
-      'This section is built for stories, explainers, guides, and long-form reading across topics and interests.',
-      'Articles connect with listings, images, resources, and other content types so deeper reading can lead naturally into related discovery.',
-      'Use this section to browse thoughtful posts, revisit useful writing, and move into supporting content when you want more context.',
+      'This index collects reporting, essays, guides, and explainers in one calm reading surface. Filters help you move between topics without losing the editorial frame.',
+      'Every card uses the same underlying post model as the rest of the platform—only the presentation is tuned for long-form scanning and slower pacing.',
+      'Start from a category, open a story, then continue through related pieces using the same routes and APIs you would on any sibling site.',
     ],
     links: [
-      { label: 'Explore listings', href: '/listings' },
-      { label: 'Open images', href: '/images' },
-      { label: 'Browse resources', href: '/pdf' },
+      { label: 'Submit an article', href: '/dashboard/articles/new' },
+      { label: 'Site search', href: '/search' },
+      { label: 'Editorial contact', href: '/contact' },
     ],
   },
   classified: {
@@ -144,74 +166,74 @@ export const taskIntroCopy: Record<
       'Browse by category to find announcements quickly, then continue into related sections when you need more detail.',
     ],
     links: [
-      { label: 'Business listings', href: '/listings' },
       { label: 'Read articles', href: '/articles' },
-      { label: 'View profiles', href: '/profile' },
+      { label: 'About', href: '/about' },
+      { label: 'Contact', href: '/contact' },
     ],
   },
   image: {
     title: 'Image-led posts and visual stories',
     paragraphs: [
       'Images take the lead in this section through galleries, visual posts, and story-led content where imagery carries the experience.',
-      'These posts connect with articles, listings, and other sections so visuals can act as entry points into deeper content.',
-      'Browse the latest visual updates, then continue into related stories or supporting pages for more context.',
+      'These posts connect with articles and other sections so visuals can act as entry points into deeper content.',
+      'Browse the latest visual updates, then continue into related stories for more context.',
     ],
     links: [
       { label: 'Read articles', href: '/articles' },
-      { label: 'Explore listings', href: '/listings' },
-      { label: 'Open classifieds', href: '/classifieds' },
+      { label: 'News index', href: '/articles' },
+      { label: 'Contact', href: '/contact' },
     ],
   },
   profile: {
     title: 'Profiles, identities, and public pages',
     paragraphs: [
-      'Profiles capture the identity behind a business, creator, brand, or project and help visitors understand who is behind the content they are exploring.',
-      'These pages work as trust anchors across the site and connect naturally with stories, listings, documents, and other post types.',
+      'Profiles capture the identity behind a brand or creator and help visitors understand who is behind the content they are exploring.',
+      'These pages work as trust anchors across the site and connect naturally with stories and resources.',
       'Browse profiles to understand people and brands more clearly, then continue into related content from the same source.',
     ],
     links: [
-      { label: 'Open listings', href: '/listings' },
-      { label: 'Read articles', href: '/articles' },
-      { label: 'Browse images', href: '/images' },
+      { label: 'Articles', href: '/articles' },
+      { label: 'About', href: '/about' },
+      { label: 'Contact', href: '/contact' },
     ],
   },
   sbm: {
     title: 'Curated links and bookmarked resources',
     paragraphs: [
       'This section collects useful links, references, tools, and saved resources in a text-first browsing format.',
-      'Bookmarks stay connected to the rest of the platform, making it easier to move from a saved link into related stories, listings, or resources.',
+      'Bookmarks stay connected to the rest of the platform, making it easier to move from a saved link into related stories or resources.',
       'Use this section to organize helpful sources and discover connected content without leaving the broader site experience.',
     ],
     links: [
       { label: 'Browse articles', href: '/articles' },
-      { label: 'Explore listings', href: '/listings' },
-      { label: 'Open PDFs', href: '/pdf' },
+      { label: 'Search', href: '/search' },
+      { label: 'Contact', href: '/contact' },
     ],
   },
   pdf: {
     title: 'PDFs, documents, and downloadable files',
     paragraphs: [
       'The PDF library hosts reports, guides, downloadable files, and longer-form document resources that support reading and discovery.',
-      'These resources work alongside stories, listings, and profiles, helping document-style content stay connected to the rest of the platform.',
+      'These resources work alongside stories and profiles, helping document-style content stay connected to the rest of the platform.',
       'Browse by category to find relevant files quickly, then continue into related sections when you want more context.',
     ],
     links: [
       { label: 'Read articles', href: '/articles' },
-      { label: 'See listings', href: '/listings' },
-      { label: 'Explore profiles', href: '/profile' },
+      { label: 'About', href: '/about' },
+      { label: 'Contact', href: '/contact' },
     ],
   },
   social: {
     title: 'Short updates and community signals',
     paragraphs: [
       'Short updates add quick signals that keep activity flowing across the platform.',
-      'They work well with stories, listings, and resources by helping visitors move from brief updates into deeper content.',
+      'They work well with stories and resources by helping visitors move from brief updates into deeper content.',
       'Use these posts as lightweight entry points into the broader site experience.',
     ],
     links: [
-      { label: 'Open listings', href: '/listings' },
-      { label: 'Read articles', href: '/articles' },
-      { label: 'View PDFs', href: '/pdf' },
+      { label: 'Articles', href: '/articles' },
+      { label: 'Contact', href: '/contact' },
+      { label: 'Search', href: '/search' },
     ],
   },
   comment: {
@@ -223,21 +245,21 @@ export const taskIntroCopy: Record<
     ],
     links: [
       { label: 'Explore articles', href: '/articles' },
-      { label: 'View listings', href: '/listings' },
-      { label: 'See classifieds', href: '/classifieds' },
+      { label: 'About', href: '/about' },
+      { label: 'Contact', href: '/contact' },
     ],
   },
   org: {
     title: 'Organizations, teams, and structured entities',
     paragraphs: [
       'Organization pages provide structured identity surfaces for teams, brands, communities, and agencies.',
-      'Used with listings, stories, profiles, and resources, they help create stronger structure across the platform.',
+      'Used with stories and resources, they help create stronger structure across the platform.',
       'Connect organization pages with related content to build a clearer and more unified site presence.',
     ],
     links: [
-      { label: 'Business listings', href: '/listings' },
-      { label: 'Read articles', href: '/articles' },
-      { label: 'PDF library', href: '/pdf' },
+      { label: 'Articles', href: '/articles' },
+      { label: 'Team directory', href: '/team' },
+      { label: 'Contact', href: '/contact' },
     ],
   },
 }

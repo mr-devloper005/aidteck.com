@@ -7,6 +7,10 @@ import { getProductKind } from '@/design/factory/get-product-kind'
 import { REGISTER_PAGE_OVERRIDE_ENABLED, RegisterPageOverride } from '@/overrides/register-page'
 
 function getRegisterConfig(kind: ReturnType<typeof getProductKind>) {
+  const inputMint =
+    'h-12 rounded-2xl border border-[#e2ebe8] bg-[#f9fcfb] px-4 text-sm text-[#121c18] outline-none placeholder:text-[#6b7f76] focus:ring-2 focus:ring-[#5a8c78]/30'
+  const inputNeutral = 'h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm outline-none'
+
   if (kind === 'directory') {
     return {
       shell: 'bg-[#f8fbff] text-slate-950',
@@ -17,18 +21,33 @@ function getRegisterConfig(kind: ReturnType<typeof getProductKind>) {
       icon: Building2,
       title: 'Create a business-ready account',
       body: 'List services, manage locations, and activate trust signals with a proper directory workflow.',
+      inputClass: inputNeutral,
+      sideBullets: [
+        'Business-first onboarding with location-aware defaults',
+        'Trust surfaces aligned with directory discovery',
+        'No editorial chrome—stay focused on listings',
+      ],
+      bulletClass: 'rounded-[1.5rem] border border-current/10 px-4 py-4 text-sm',
     }
   }
   if (kind === 'editorial') {
     return {
-      shell: 'bg-[#fbf6ee] text-[#241711]',
-      panel: 'border border-[#dcc8b7] bg-[#fffdfa]',
-      side: 'border border-[#e6d6c8] bg-[#fff4e8]',
-      muted: 'text-[#6e5547]',
-      action: 'bg-[#241711] text-[#fff1e2] hover:bg-[#3a241b]',
+      shell: 'bg-[#f9fcfb] text-[#121c18]',
+      panel: 'border border-[#e2ebe8] bg-white shadow-[0_28px_70px_rgba(18,40,32,0.07)]',
+      side: 'border border-[#cfe5db] bg-[#eef6f3]',
+      muted: 'text-[#4a5c54]',
+      action: 'bg-[#121c18] text-white hover:bg-[#24332c]',
       icon: FileText,
       title: 'Start your contributor workspace',
-      body: 'Create a profile for essays, issue drafts, editorial review, and publication scheduling.',
+      body:
+        'Create an account for drafts, editorial review, and publication scheduling—same calm mint shell as the rest of Aidteck.',
+      inputClass: inputMint,
+      sideBullets: [
+        'Mint-and-ink UI aligned with the reader homepage',
+        'Forms tuned for clarity—no noisy gradients',
+        'Article-first paths: submit, browse, contact',
+      ],
+      bulletClass: 'rounded-[1.5rem] border border-[#e2ebe8] bg-white/80 px-4 py-4 text-sm leading-relaxed text-[#4a5c54]',
     }
   }
   if (kind === 'visual') {
@@ -41,6 +60,13 @@ function getRegisterConfig(kind: ReturnType<typeof getProductKind>) {
       icon: ImageIcon,
       title: 'Set up your creator profile',
       body: 'Launch a visual-first account with gallery publishing, identity surfaces, and profile-led discovery.',
+      inputClass: inputNeutral,
+      sideBullets: [
+        'Gallery-forward surfaces with strong imagery',
+        'Identity and profile tools tuned for creators',
+        'Studio chrome separate from the editorial site',
+      ],
+      bulletClass: 'rounded-[1.5rem] border border-current/10 px-4 py-4 text-sm',
     }
   }
   return {
@@ -52,6 +78,13 @@ function getRegisterConfig(kind: ReturnType<typeof getProductKind>) {
     icon: Bookmark,
     title: 'Create a curator account',
     body: 'Build shelves, save references, and connect collections to your profile without a generic feed setup.',
+    inputClass: inputNeutral,
+    sideBullets: [
+      'Curated collections without a noisy algorithmic feed',
+      'Shelves and references connected to your profile',
+      'Warm paper tone—distinct from the article site',
+    ],
+    bulletClass: 'rounded-[1.5rem] border border-current/10 px-4 py-4 text-sm',
   }
 }
 
@@ -75,20 +108,26 @@ export default function RegisterPage() {
             <h1 className="mt-5 text-4xl font-semibold tracking-[-0.05em]">{config.title}</h1>
             <p className={`mt-5 text-sm leading-8 ${config.muted}`}>{config.body}</p>
             <div className="mt-8 grid gap-4">
-              {['Different onboarding per product family', 'No repeated one-size-fits-all shell', 'Profile, publishing, and discovery aligned'].map((item) => (
-                <div key={item} className="rounded-[1.5rem] border border-current/10 px-4 py-4 text-sm">{item}</div>
+              {config.sideBullets.map((item) => (
+                <div key={item} className={config.bulletClass}>
+                  {item}
+                </div>
               ))}
             </div>
           </div>
 
           <div className={`rounded-[2rem] p-8 ${config.panel}`}>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Create account</p>
+            <p className={`text-xs font-semibold uppercase tracking-[0.24em] ${productKind === 'editorial' ? 'text-[#4a5c54]' : 'opacity-70'}`}>
+              Create account
+            </p>
             <form className="mt-6 grid gap-4">
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Full name" />
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Email address" />
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Password" type="password" />
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="What are you creating or publishing?" />
-              <button type="submit" className={`inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-semibold ${config.action}`}>Create account</button>
+              <input className={config.inputClass} placeholder="Full name" />
+              <input className={config.inputClass} placeholder="Email address" type="email" />
+              <input className={config.inputClass} placeholder="Password" type="password" />
+              <input className={config.inputClass} placeholder="What are you creating or publishing?" />
+              <button type="submit" className={`inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-semibold ${config.action}`}>
+                Create account
+              </button>
             </form>
             <div className={`mt-6 flex items-center justify-between text-sm ${config.muted}`}>
               <span>Already have an account?</span>

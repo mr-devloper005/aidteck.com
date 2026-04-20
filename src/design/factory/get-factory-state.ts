@@ -5,7 +5,7 @@ import { THEME_PACKS } from '@/design/factory/theme-pack-data'
 import { getProductKind } from '@/design/factory/get-product-kind'
 
 export function getFactoryState() {
-  const themePack = THEME_PACKS[SITE_RECIPE.themePack]
+  const themePack = THEME_PACKS[SITE_RECIPE.themePack] ?? THEME_PACKS['medium-journal']
   const recipe = {
     ...SITE_FACTORY_RECIPE,
     brandPack: themePack.brandPack,
@@ -21,7 +21,7 @@ export function getFactoryState() {
     },
   }
 
-  const brandPack = BRAND_PACKS[recipe.brandPack]
+  const brandPack = BRAND_PACKS[recipe.brandPack] ?? BRAND_PACKS['editorial-luxe']
   const productKind = getProductKind(recipe)
 
   return {

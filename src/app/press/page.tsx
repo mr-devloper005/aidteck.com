@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { PageShell } from '@/components/shared/page-shell'
+import { editorialCardClass, editorialInsetClass } from '@/components/shared/editorial-layout'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -23,26 +24,30 @@ export default function PressPage() {
 
   return (
     <PageShell
-      title="Press"
-      description="Media resources, brand assets, and press coverage."
+      eyebrow="Media"
+      title="Press & brand"
+      description="Logos, screenshots, and coverage—presented in the same mint-and-ink system as the rest of Aidteck."
     >
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <Card className="border-border bg-card">
-          <CardContent className="p-6 space-y-3">
-            <h2 className="text-lg font-semibold text-foreground">Press Kit</h2>
-            <p className="text-sm text-muted-foreground">
-              Download logos, product screenshots, and brand guidelines for media use.
+        <Card className={editorialCardClass}>
+          <CardContent className="space-y-4 p-6 sm:p-8">
+            <h2 className="text-lg font-bold text-[#121c18]">Press kit</h2>
+            <p className="text-sm leading-relaxed text-[#4a5c54]">
+              Download logos, product screenshots, and brand guidelines for editorial use. Prefer the wordmark on light mint
+              backgrounds when possible.
             </p>
-            <div className="grid gap-2">
+            <div className="grid gap-3">
               {mockPressAssets.map((asset) => (
-                <div key={asset.id} className="rounded-lg border border-border bg-secondary/40 px-4 py-3">
+                <div key={asset.id} className={editorialInsetClass}>
                   <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>
-                      <p className="text-sm font-medium text-foreground">{asset.title}</p>
-                      <p className="text-xs text-muted-foreground">{asset.description}</p>
+                      <p className="text-sm font-semibold text-[#121c18]">{asset.title}</p>
+                      <p className="text-xs text-[#4a5c54]">{asset.description}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary">{asset.fileType}</Badge>
+                      <Badge variant="secondary" className="rounded-full border-[#cfe5db] bg-[#eef6f3] text-[#24332c]">
+                        {asset.fileType}
+                      </Badge>
                       <Button size="sm" variant="outline" onClick={() => setActiveAssetId(asset.id)}>
                         Preview
                       </Button>
@@ -66,11 +71,11 @@ export default function PressPage() {
         </Card>
         <div className="space-y-4">
           {mockPressCoverage.map((item) => (
-            <Card key={item.id} className="border-border bg-card transition-transform hover:-translate-y-1">
-              <CardContent className="p-6">
-                <div className="text-xs uppercase tracking-wide text-muted-foreground">{item.outlet}</div>
-                <p className="mt-2 text-sm text-foreground">{item.headline}</p>
-                <p className="mt-2 text-xs text-muted-foreground">{item.date}</p>
+            <Card key={item.id} className={`${editorialCardClass} transition-transform hover:-translate-y-0.5`}>
+              <CardContent className="p-6 sm:p-7">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6b7f76]">{item.outlet}</div>
+                <p className="mt-2 text-sm font-medium leading-relaxed text-[#121c18]">{item.headline}</p>
+                <p className="mt-2 text-xs text-[#4a5c54]">{item.date}</p>
               </CardContent>
             </Card>
           ))}
@@ -78,12 +83,12 @@ export default function PressPage() {
       </div>
 
       <Dialog open={Boolean(activeAsset)} onOpenChange={() => setActiveAssetId(null)}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl border-[#e2ebe8] bg-[#fcfefd]">
           <DialogHeader>
             <DialogTitle>{activeAsset?.title}</DialogTitle>
           </DialogHeader>
           {activeAsset?.previewUrl && (
-            <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-border bg-muted">
+            <div className="relative aspect-[16/9] overflow-hidden rounded-2xl border border-[#e2ebe8] bg-[#f4faf7]">
               <Image
                 src={activeAsset.previewUrl}
                 alt={activeAsset.title}
@@ -92,7 +97,7 @@ export default function PressPage() {
               />
             </div>
           )}
-          <p className="text-sm text-muted-foreground">{activeAsset?.description}</p>
+          <p className="text-sm leading-relaxed text-[#4a5c54]">{activeAsset?.description}</p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setActiveAssetId(null)}>
               Close

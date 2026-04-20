@@ -19,6 +19,7 @@ import { getFactoryState } from "@/design/factory/get-factory-state";
 import { getProductKind } from "@/design/factory/get-product-kind";
 import { DirectoryTaskDetailPage } from "@/design/products/directory/task-detail-page";
 import { TASK_DETAIL_PAGE_OVERRIDE_ENABLED, TaskDetailPageOverride } from "@/overrides/task-detail-page";
+import { editorialPageWrapClass, editorialShellHeroClass } from "@/components/shared/editorial-layout";
 
 type PostContent = {
   category?: string;
@@ -248,16 +249,74 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={cn("min-h-screen", isArticle ? "bg-[#f9fcfb]" : "bg-background")}>
       <NavbarShell />
-      <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      {isArticle ? (
+        <section className={editorialShellHeroClass}>
+          <div className={`${editorialPageWrapClass} pb-8 pt-10 sm:pt-12`}>
+            <nav aria-label="Breadcrumb" className="text-sm text-[#4a5c54]">
+              <ol className="flex flex-wrap items-center gap-2">
+                <li>
+                  <Link href="/" className="hover:text-[#121c18]">
+                    Home
+                  </Link>
+                </li>
+                <li aria-hidden className="text-[#b9d4c9]">
+                  /
+                </li>
+                <li>
+                  <Link href={taskConfig?.route || "/articles"} className="hover:text-[#121c18]">
+                    {taskConfig?.label || "Articles"}
+                  </Link>
+                </li>
+                <li aria-hidden className="text-[#b9d4c9]">
+                  /
+                </li>
+                <li className="font-medium text-[#121c18]">{category}</li>
+              </ol>
+            </nav>
+            <h1 className="mt-6 text-3xl font-bold leading-[1.15] tracking-tight text-[#121c18] sm:text-4xl lg:text-[2.35rem]">
+              {post.title}
+            </h1>
+            <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[#4a5c54]">
+              <span>By {articleAuthor}</span>
+              {articleDate ? <span>{articleDate}</span> : null}
+              <Badge variant="secondary" className="inline-flex items-center gap-1 rounded-full border-[#cfe5db] bg-[#eef6f3] text-[#24332c]">
+                <Tag className="h-3.5 w-3.5" />
+                {category}
+              </Badge>
+            </div>
+            {postTags.length ? (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {postTags.map((tag) => (
+                  <Badge key={tag} variant="outline" className="rounded-full border-[#e2ebe8]">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            ) : null}
+            {articleSummary ? (
+              <p className="mt-6 max-w-3xl text-base leading-relaxed text-[#4a5c54]">{articleSummary}</p>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
+      <main
+        className={
+          isArticle
+            ? `${editorialPageWrapClass} pb-14 pt-2 sm:pt-4`
+            : "mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8"
+        }
+      >
         <SchemaJsonLd data={schemaPayload} />
-        <Link
-          href={taskConfig?.route || "/"}
-          className="mb-6 inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
-        >
-          ← Back to {taskConfig?.label || "posts"}
-        </Link>
+        {!isArticle ? (
+          <Link
+            href={taskConfig?.route || "/"}
+            className="mb-6 inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+          >
+            ← Back to {taskConfig?.label || "posts"}
+          </Link>
+        ) : null}
 
         <div
           className={cn(
@@ -267,32 +326,9 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
         >
           <div className={cn(isClassified ? "space-y-8" : "")}>
             {isArticle ? (
-              <div className="mx-auto w-full max-w-4xl space-y-6">
-                <h1 className="text-4xl font-semibold leading-tight text-foreground">
-                  {post.title}
-                </h1>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-                  <span>By {articleAuthor}</span>
-                  {articleDate ? <span>{articleDate}</span> : null}
-                  <Badge variant="secondary" className="inline-flex items-center gap-1">
-                    <Tag className="h-3.5 w-3.5" />
-                    {category}
-                  </Badge>
-                </div>
-                {postTags.length ? (
-                  <div className="flex flex-wrap gap-2">
-                    {postTags.map((tag) => (
-                      <Badge key={tag} variant="outline">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                ) : null}
-                {articleSummary ? (
-                  <p className="text-base leading-7 text-muted-foreground">{articleSummary}</p>
-                ) : null}
+              <div className="mx-auto w-full max-w-3xl space-y-8">
                 {images[0] ? (
-                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-border bg-muted">
+                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-[#e2ebe8] bg-[#f4faf7] shadow-sm sm:rounded-3xl">
                     <ContentImage
                       src={images[0]}
                       alt={`${post.title} featured image`}
@@ -303,7 +339,10 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                     />
                   </div>
                 ) : null}
-                <RichContent html={articleHtml} className="leading-8 prose-p:my-6 prose-h2:my-8 prose-h3:my-6 prose-ul:my-6" />
+                <RichContent
+                  html={articleHtml}
+                  className="leading-8 text-[#1a2822] prose-p:my-6 prose-h2:my-8 prose-h3:my-6 prose-ul:my-6"
+                />
                 <ArticleComments slug={post.slug} />
               </div>
             ) : null}

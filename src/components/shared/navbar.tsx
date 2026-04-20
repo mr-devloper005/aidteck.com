@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
@@ -41,12 +41,12 @@ const variantClasses = {
     mobile: 'border-t border-slate-200/70 bg-white/95',
   },
   'editorial-bar': {
-    shell: 'border-b border-[#d7c4b3] bg-[#fff7ee]/90 text-[#2f1d16] backdrop-blur-xl',
-    logo: 'rounded-full border border-[#dbc6b6] bg-white shadow-sm',
-    active: 'bg-[#2f1d16] text-[#fff4e4]',
-    idle: 'text-[#72594a] hover:bg-[#f2e5d4] hover:text-[#2f1d16]',
-    cta: 'rounded-full bg-[#2f1d16] text-[#fff4e4] hover:bg-[#452920]',
-    mobile: 'border-t border-[#dbc6b6] bg-[#fff7ee]',
+    shell: 'border-b border-black/[0.06] bg-transparent text-neutral-900',
+    logo: 'h-9 w-9 shrink-0 overflow-hidden rounded-xl object-cover sm:h-10 sm:w-10',
+    active: 'text-neutral-950',
+    idle: 'text-neutral-600 hover:text-neutral-950',
+    cta: 'rounded-full bg-neutral-950 px-6 py-2.5 text-sm font-semibold text-white shadow-none hover:bg-neutral-800',
+    mobile: 'border-t border-neutral-200/90 bg-white/95 backdrop-blur-md',
   },
   'floating-bar': {
     shell: 'border-b border-transparent bg-transparent text-white',
@@ -99,6 +99,13 @@ export function Navbar() {
 
   const navigation = useMemo(() => SITE_CONFIG.tasks.filter((task) => task.enabled && task.key !== 'profile'), [])
   const primaryNavigation = navigation.slice(0, 5)
+  const editorialCenterNav = useMemo(() => {
+    const raw = siteContent.navbar as typeof siteContent.navbar & { centerLinks?: { label: string; href: string }[] }
+    return raw.centerLinks?.length
+      ? raw.centerLinks
+      : primaryNavigation.map((task) => ({ label: task.label, href: task.route }))
+  }, [primaryNavigation])
+  const submitCta = (siteContent.navbar as typeof siteContent.navbar & { submitCta?: { label: string; href: string } }).submitCta
   const mobileNavigation = navigation.map((task) => ({
     name: task.label,
     href: task.route,
@@ -205,13 +212,68 @@ export function Navbar() {
   const isEditorial = recipe.navbar === 'editorial-bar'
   const isUtility = recipe.navbar === 'utility-bar'
 
+  const logoSrc = '/favicon.png?v=20260420'
+
   return (
     <header className={cn('sticky top-0 z-50 w-full', style.shell)}>
-      <nav className={cn('mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8', isFloating ? 'h-24 pt-4' : 'h-20')}>
+      {isEditorial ? (
+        <nav className="mx-auto grid min-h-[4rem] w-full max-w-6xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6 lg:min-h-[4.25rem] lg:gap-6 lg:px-8">
+          <Link href="/" className="flex min-w-0 shrink-0 items-center gap-2.5">
+            <img src={logoSrc} alt="" width={40} height={40} className={style.logo} />
+            <span className="truncate font-sans text-lg font-semibold tracking-tight text-neutral-950">{SITE_CONFIG.name}</span>
+          </Link>
+
+          <div className="hidden min-w-0 items-center justify-center justify-self-center gap-6 sm:gap-8 lg:flex">
+            {editorialCenterNav.map((item) => {
+              const isActive =
+                item.href === '/'
+                  ? pathname === '/' || pathname === ''
+                  : pathname === item.href || pathname.startsWith(`${item.href}/`)
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'shrink-0 text-sm font-medium transition-colors',
+                    isActive ? style.active : style.idle
+                  )}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
+          </div>
+
+          <div className="flex min-w-0 items-center justify-end gap-1 sm:gap-2">
+            <Button variant="ghost" size="icon" asChild className="hidden rounded-full text-neutral-600 hover:bg-black/5 hover:text-neutral-950 md:flex">
+              <Link href="/search">
+                <Search className="h-[1.125rem] w-[1.125rem]" />
+                <span className="sr-only">Search</span>
+              </Link>
+            </Button>
+            {isAuthenticated ? (
+              <NavbarAuthControls />
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild className="hidden rounded-full px-3 text-sm font-medium text-neutral-600 hover:bg-transparent hover:text-neutral-950 md:inline-flex">
+                  <Link href="/login">Sign in</Link>
+                </Button>
+                <Button size="sm" asChild className={cn('hidden md:inline-flex', style.cta)}>
+                  <Link href={submitCta?.href ?? '/register'}>{submitCta?.label ?? 'Get started'}</Link>
+                </Button>
+              </>
+            )}
+            <Button variant="ghost" size="icon" className="rounded-full text-neutral-700 hover:bg-black/5 lg:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
+        </nav>
+      ) : (
+        <nav className={cn('mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8', isFloating ? 'h-24 pt-4' : 'h-20')}>
         <div className="flex min-w-0 flex-1 items-center gap-4 lg:gap-7">
           <Link href="/" className="flex shrink-0 items-center gap-3 whitespace-nowrap pr-2">
             <div className={cn('flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden p-1.5', style.logo)}>
-              <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
+              <img src={logoSrc} alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
             </div>
             <div className="min-w-0 hidden sm:block">
               <span className="block truncate text-xl font-semibold">{SITE_CONFIG.name}</span>
@@ -219,20 +281,7 @@ export function Navbar() {
             </div>
           </Link>
 
-          {isEditorial ? (
-            <div className="hidden min-w-0 flex-1 items-center gap-4 xl:flex">
-              <div className="h-px flex-1 bg-[#d8c8bb]" />
-              {primaryNavigation.map((task) => {
-                const isActive = pathname.startsWith(task.route)
-                return (
-                  <Link key={task.key} href={task.route} className={cn('text-sm font-semibold uppercase tracking-[0.18em] transition-colors', isActive ? 'text-[#2f1d16]' : 'text-[#7b6254] hover:text-[#2f1d16]')}>
-                    {task.label}
-                  </Link>
-                )
-              })}
-              <div className="h-px flex-1 bg-[#d8c8bb]" />
-            </div>
-          ) : isFloating ? (
+          {isFloating ? (
             <div className="hidden min-w-0 flex-1 items-center gap-2 xl:flex">
               {primaryNavigation.map((task) => {
                 const Icon = taskIcons[task.key] || LayoutGrid
@@ -295,7 +344,7 @@ export function Navbar() {
                 <Link href="/login">Sign In</Link>
               </Button>
               <Button size="sm" asChild className={style.cta}>
-                <Link href="/register">{isEditorial ? 'Subscribe' : isUtility ? 'Post Now' : 'Get Started'}</Link>
+                <Link href="/register">{isUtility ? 'Post Now' : 'Get Started'}</Link>
               </Button>
             </div>
           )}
@@ -305,6 +354,7 @@ export function Navbar() {
           </Button>
         </div>
       </nav>
+      )}
 
       {isFloating && primaryTask ? (
         <div className="mx-auto hidden max-w-7xl px-4 pb-3 sm:px-6 lg:block lg:px-8">
@@ -323,15 +373,49 @@ export function Navbar() {
               <Search className="h-4 w-4" />
               Search the site
             </Link>
-            {mobileNavigation.map((item) => {
-              const isActive = pathname.startsWith(item.href)
-              return (
-                <Link key={item.name} href={item.href} onClick={() => setIsMobileMenuOpen(false)} className={cn('flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-colors', isActive ? style.active : style.idle)}>
-                  <item.icon className="h-5 w-5" />
-                  {item.name}
-                </Link>
-              )
-            })}
+            {isEditorial
+              ? editorialCenterNav.map((item) => {
+                  const isActive =
+                    item.href === '/'
+                      ? pathname === '/' || pathname === ''
+                      : pathname === item.href || pathname.startsWith(`${item.href}/`)
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        'flex rounded-2xl px-4 py-3 text-sm font-medium transition-colors',
+                        isActive ? style.active : style.idle
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  )
+                })
+              : mobileNavigation.map((item) => {
+                  const isActive = pathname.startsWith(item.href)
+                  return (
+                    <Link key={item.name} href={item.href} onClick={() => setIsMobileMenuOpen(false)} className={cn('flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-colors', isActive ? style.active : style.idle)}>
+                      <item.icon className="h-5 w-5" />
+                      {item.name}
+                    </Link>
+                  )
+                })}
+            {isEditorial && !isAuthenticated ? (
+              <div className="flex flex-col gap-2 border-t border-neutral-200/80 pt-4">
+                <Button variant="ghost" size="sm" asChild className="justify-start rounded-xl px-4 text-sm font-medium text-neutral-600">
+                  <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                    Sign in
+                  </Link>
+                </Button>
+                <Button size="sm" asChild className={cn('w-full', style.cta)}>
+                  <Link href={submitCta?.href ?? '/register'} onClick={() => setIsMobileMenuOpen(false)}>
+                    {submitCta?.label ?? 'Get started'}
+                  </Link>
+                </Button>
+              </div>
+            ) : null}
           </div>
         </div>
       )}

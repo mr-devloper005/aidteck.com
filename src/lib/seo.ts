@@ -3,12 +3,31 @@ import type { Metadata } from "next";
 import { SITE_CONFIG, type TaskKey, getTaskConfig } from "./site-config";
 import { fetchSiteBootstrap, type SitePost } from "./site-connector";
 
-const baseUrl = SITE_CONFIG.baseUrl.replace(/\/$/, "");
+function resolvePublicSiteUrl(): { baseUrl: string; baseOrigin: string } {
+  const fallback = "https://aidteck.com";
+  let raw = (SITE_CONFIG.baseUrl || "").trim();
+  if (!raw) {
+    const u = new URL(fallback);
+    return { baseUrl: fallback.replace(/\/$/, ""), baseOrigin: u.origin };
+  }
+  if (!/^https?:\/\//i.test(raw)) {
+    raw = `https://${raw}`;
+  }
+  raw = raw.replace(/\/$/, "");
+  try {
+    const u = new URL(raw);
+    const normalized = u.toString().replace(/\/$/, "");
+    return { baseUrl: normalized, baseOrigin: u.origin };
+  } catch {
+    const u = new URL(fallback);
+    return { baseUrl: fallback.replace(/\/$/, ""), baseOrigin: u.origin };
+  }
+}
+
+const { baseUrl, baseOrigin } = resolvePublicSiteUrl();
 
 export const canonicalForPath = (path = "/") =>
   `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
-
-const baseOrigin = new URL(baseUrl).origin;
 
 const normalizeCanonicalUrl = (value: string | undefined, fallbackPath: string) => {
   if (!value) return canonicalForPath(fallbackPath);

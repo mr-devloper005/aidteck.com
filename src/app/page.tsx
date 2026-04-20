@@ -10,6 +10,7 @@ import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import { buildPageMetadata } from '@/lib/seo'
 import { fetchTaskPosts } from '@/lib/task-data'
 import { siteContent } from '@/config/site.content'
+import { CATEGORY_OPTIONS } from '@/lib/categories'
 import { getFactoryState } from '@/design/factory/get-factory-state'
 import { getProductKind, type ProductKind } from '@/design/factory/get-product-kind'
 import type { SitePost } from '@/lib/site-connector'
@@ -101,14 +102,16 @@ function getDirectoryTone(brandPack: string) {
 
 function getEditorialTone() {
   return {
-    shell: 'bg-[#fbf6ee] text-[#241711]',
-    panel: 'border border-[#dcc8b7] bg-[#fffdfa] shadow-[0_24px_60px_rgba(77,47,27,0.08)]',
-    soft: 'border border-[#e6d6c8] bg-[#fff4e8]',
-    muted: 'text-[#6e5547]',
-    title: 'text-[#241711]',
-    badge: 'bg-[#241711] text-[#fff1e2]',
-    action: 'bg-[#241711] text-[#fff1e2] hover:bg-[#3a241b]',
-    actionAlt: 'border border-[#dcc8b7] bg-transparent text-[#241711] hover:bg-[#f5e7d7]',
+    shell: 'bg-[#f9fcfb] text-[#121c18]',
+    panel: 'border border-[#c8ddd4] bg-white shadow-[0_22px_58px_rgba(18,40,32,0.08)]',
+    soft: 'border border-[#cfe5db] bg-[#f1f8f5]',
+    heroInset: 'bg-[#e6f2ee]',
+    muted: 'text-[#4a5c54]',
+    title: 'text-[#121c18]',
+    badge: 'bg-[#121c18] text-white',
+    action: 'bg-[#121c18] text-white hover:bg-[#24332c]',
+    actionAlt: 'border border-[#b9d4c9] bg-white text-[#121c18] hover:bg-[#eef6f3]',
+    overlay: 'bg-gradient-to-t from-black/82 via-black/28 to-transparent',
   }
 }
 
@@ -268,75 +271,235 @@ function DirectoryHome({ primaryTask, enabledTasks, listingPosts, classifiedPost
   )
 }
 
-function EditorialHome({ primaryTask, articlePosts, supportTasks }: { primaryTask?: EnabledTask; articlePosts: SitePost[]; supportTasks: EnabledTask[] }) {
+function formatPostDate(post?: SitePost | null) {
+  const raw = post?.publishedAt || post?.createdAt
+  if (!raw) return ''
+  try {
+    return new Date(raw).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  } catch {
+    return ''
+  }
+}
+
+function EditorialHome({ primaryTask, articlePosts }: { primaryTask?: EnabledTask; articlePosts: SitePost[] }) {
   const tone = getEditorialTone()
   const lead = articlePosts[0]
-  const side = articlePosts.slice(1, 5)
+  const rail = articlePosts.slice(1, 4)
+  const popularShow = articlePosts.slice(0, 3)
+  const grid = articlePosts.slice(4, 10)
+  const heroFrames = [0, 1, 2].map((i) =>
+    articlePosts[i] ? getPostImage(articlePosts[i]) : '/placeholder.svg?height=960&width=640'
+  )
+  const categoryChips = [
+    { name: siteContent.home.categoryTabAll, slug: 'all' as const },
+    ...CATEGORY_OPTIONS.slice(0, 7),
+  ]
 
   return (
     <main className={tone.shell}>
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-18">
-        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
-          <div>
-            <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] ${tone.badge}`}>
+      <section className="mx-auto max-w-7xl px-4 pb-6 pt-10 sm:px-6 lg:px-8 lg:pb-10 lg:pt-14">
+        <div className={`grid gap-10 overflow-hidden rounded-[2rem] px-6 py-10 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-12 lg:py-12 ${tone.heroInset}`}>
+          <div className="max-w-xl">
+            <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-white ${tone.badge}`}>
               <FileText className="h-3.5 w-3.5" />
-              Reading-first publication
+              {siteContent.hero.badge}
             </span>
-            <h1 className={`mt-6 max-w-4xl text-5xl font-semibold tracking-[-0.06em] sm:text-6xl ${tone.title}`}>
-              Essays, analysis, and slower reading designed like a publication, not a dashboard.
+            <h1 className={`mt-6 text-4xl font-semibold leading-[1.08] tracking-[-0.04em] sm:text-5xl lg:text-[3.15rem] ${tone.title}`}>
+              {siteContent.hero.title[0]} <span className="text-balance">{siteContent.hero.title[1]}</span>
             </h1>
-            <p className={`mt-6 max-w-2xl text-base leading-8 ${tone.muted}`}>{SITE_CONFIG.description}</p>
+            <p className={`mt-5 text-base leading-8 ${tone.muted}`}>{siteContent.hero.description}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href={primaryTask?.route || '/articles'} className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.action}`}>
-                Start reading
+              <Link
+                href={siteContent.hero.primaryCta.href}
+                className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold shadow-sm transition-transform duration-300 hover:-translate-y-0.5 ${tone.action}`}
+              >
+                {siteContent.hero.primaryCta.label}
                 <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link href="/about" className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.actionAlt}`}>
-                About the publication
+              <Link
+                href={siteContent.hero.secondaryCta.href}
+                className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors ${tone.actionAlt}`}
+              >
+                {siteContent.hero.secondaryCta.label}
               </Link>
             </div>
           </div>
 
-          <aside className={`rounded-[2rem] p-6 ${tone.panel}`}>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Inside this issue</p>
-            <div className="mt-5 space-y-5">
-              {side.map((post) => (
-                <Link key={post.id} href={`/articles/${post.slug}`} className="block border-b border-black/10 pb-5 last:border-b-0 last:pb-0">
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] opacity-60">Feature</p>
-                  <h3 className="mt-2 text-xl font-semibold">{post.title}</h3>
-                  <p className={`mt-2 text-sm leading-7 ${tone.muted}`}>{post.summary || 'Long-form perspective with a calmer reading rhythm.'}</p>
-                </Link>
-              ))}
+          <div className="relative mx-auto flex h-[min(420px,52vw)] w-full max-w-md items-end justify-center gap-3 sm:max-w-none sm:justify-end lg:h-[460px]">
+            <div className="relative h-[88%] w-[30%] translate-y-4 overflow-hidden rounded-2xl shadow-[0_20px_50px_rgba(15,32,26,0.12)] sm:w-[28%]">
+              <ContentImage
+                src={heroFrames[0]}
+                alt={articlePosts[0]?.title ? `Illustration for ${articlePosts[0].title}` : 'Editorial photography'}
+                fill
+                className="object-cover"
+              />
             </div>
-          </aside>
+            <div className="relative z-[1] h-full w-[34%] overflow-hidden rounded-2xl shadow-[0_28px_70px_rgba(15,32,26,0.16)] sm:w-[32%]">
+              <ContentImage
+                src={heroFrames[1]}
+                alt={articlePosts[1]?.title ? `Illustration for ${articlePosts[1].title}` : 'Editorial photography'}
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative h-[78%] w-[30%] -translate-y-2 overflow-hidden rounded-2xl shadow-[0_20px_50px_rgba(15,32,26,0.12)] sm:w-[28%]">
+              <ContentImage
+                src={heroFrames[2]}
+                alt={articlePosts[2]?.title ? `Illustration for ${articlePosts[2].title}` : 'Editorial photography'}
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-14 border-b border-[#dce8e4] pb-10">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#5a6b65]">{siteContent.home.sideBadge}</p>
+              <h2 className={`mt-2 font-serif text-3xl tracking-[-0.03em] sm:text-4xl ${tone.title}`}>{siteContent.home.popularWorksTitle}</h2>
+            </div>
+            <Link href={primaryTask?.route || '/articles'} className="text-sm font-semibold text-[#0f1714] underline-offset-4 hover:underline">
+              {siteContent.home.primaryLink.label}
+            </Link>
+          </div>
+          <div className="mt-8 flex flex-wrap items-center gap-6 border-b border-[#cfe5db]/80 pb-8">
+            {siteContent.home.popularAuthors.map((author) => (
+              <div key={author.name} className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#b9d4c9] bg-white text-sm font-semibold text-[#24332c] shadow-sm">
+                  {author.initials}
+                </div>
+                <span className={`text-sm font-medium ${tone.title}`}>{author.name}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {popularShow.length
+              ? popularShow.map((post) => (
+                  <div key={post.id} className={`flex gap-4 rounded-2xl p-5 ${tone.soft}`}>
+                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-[#c8ddd4] bg-white">
+                      <ContentImage src={getPostImage(post)} alt="" fill className="object-cover" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#4a5c54]">{getPostMeta(post).category || 'Essay'}</p>
+                      <p className={`mt-1 font-semibold leading-snug ${tone.title}`}>{post.title}</p>
+                      <p className={`mt-2 text-sm leading-relaxed ${tone.muted}`}>
+                        {post.summary || 'Contributor-led perspective with room for nuance.'}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              : ['Field notes', 'Desk analysis', 'Reader letters'].map((label, idx) => (
+                  <div key={label} className={`flex gap-4 rounded-2xl p-5 ${tone.soft}`}>
+                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-[#c8ddd4] bg-[#e6f2ee]" />
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#4a5c54]">Coming soon</p>
+                      <p className={`mt-1 font-semibold leading-snug ${tone.title}`}>{label}</p>
+                      <p className={`mt-2 text-sm leading-relaxed ${tone.muted}`}>
+                        {['Ideas from contributors this month.', 'Explainers with a sharper point of view.', 'Short reactions to what we published.'][idx]}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+          </div>
+        </div>
+
+        <div className="mt-8 flex flex-wrap gap-2">
+          {categoryChips.map((cat) => {
+            const active = cat.slug === 'all'
+            const href = cat.slug === 'all' ? '/articles' : `/articles?category=${cat.slug}`
+            return (
+              <Link
+                key={cat.slug}
+                href={href}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                  active ? `${tone.badge} shadow-sm` : 'border border-[#dce8e4] bg-white text-[#0f1714] hover:border-[#0f1714]/25'
+                }`}
+              >
+                {cat.name}
+              </Link>
+            )
+          })}
         </div>
 
         {lead ? (
-          <div className={`mt-12 overflow-hidden rounded-[2.5rem] ${tone.panel}`}>
-            <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
-              <div className="relative min-h-[360px] overflow-hidden">
-                <ContentImage src={getPostImage(lead)} alt={lead.title} fill className="object-cover" />
+          <div className="mt-12 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
+            <Link href={`/articles/${lead.slug}`} className={`group relative block min-h-[340px] overflow-hidden rounded-[1.75rem] ${tone.panel}`}>
+              <ContentImage src={getPostImage(lead)} alt={lead.title} fill className="object-cover transition duration-700 group-hover:scale-[1.02]" />
+              <div className={`absolute inset-0 ${tone.overlay}`} />
+              <div className="absolute inset-x-0 bottom-0 p-7 text-white">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/80">Featured</p>
+                <h3 className="mt-2 font-serif text-3xl leading-tight tracking-[-0.03em]">{lead.title}</h3>
+                <p className="mt-3 line-clamp-2 text-sm text-white/85">{lead.summary || 'Open the story for the full essay and supporting context.'}</p>
               </div>
-              <div className="p-8 lg:p-10">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Lead story</p>
-                <h2 className="mt-4 text-4xl font-semibold tracking-[-0.04em]">{lead.title}</h2>
-                <p className={`mt-4 text-sm leading-8 ${tone.muted}`}>{lead.summary || 'A more deliberate lead story surface with room for a proper narrative setup.'}</p>
-                <Link href={`/articles/${lead.slug}`} className={`mt-8 inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.action}`}>
-                  Read article
-                  <ArrowRight className="h-4 w-4" />
+            </Link>
+
+            <div className="flex flex-col gap-4">
+              {rail.length ? (
+                rail.map((post) => (
+                  <Link
+                    key={post.id}
+                    href={`/articles/${post.slug}`}
+                    className={`group flex gap-4 rounded-2xl p-4 transition-colors hover:bg-white ${tone.soft}`}
+                  >
+                    <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-[#dce8e4] bg-white">
+                      <ContentImage src={getPostImage(post)} alt={post.title} fill className="object-cover" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#5a6b65]">{getPostMeta(post).category || 'Article'}</p>
+                      <p className={`mt-1 font-semibold leading-snug ${tone.title}`}>{post.title}</p>
+                      <p className={`mt-1 text-xs ${tone.muted}`}>{formatPostDate(post)}</p>
+                      <p className={`mt-2 line-clamp-2 text-sm ${tone.muted}`}>{post.summary || 'A concise excerpt from the piece.'}</p>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <div className={`rounded-2xl p-6 text-sm ${tone.muted}`}>More stories will appear here as they publish.</div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className={`mt-12 rounded-[1.75rem] border border-dashed border-[#c5d9d2] bg-white/80 p-10 text-center ${tone.muted}`}>
+            <p className="font-medium text-[#0f1714]">Stories are on the way.</p>
+            <p className="mt-2 text-sm">The archive will populate as articles go live—browse categories above or visit the news desk.</p>
+            <Link href="/articles" className={`mt-6 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold ${tone.action}`}>
+              Open articles
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        )}
+
+        {grid.length ? (
+          <div className="mt-16">
+            <h2 className={`font-serif text-3xl tracking-[-0.03em] sm:text-4xl ${tone.title}`}>{siteContent.home.newPublishedTitle}</h2>
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {grid.map((post) => (
+                <Link key={post.id} href={`/articles/${post.slug}`} className={`group overflow-hidden rounded-2xl ${tone.soft} transition hover:-translate-y-1 hover:shadow-md`}>
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <ContentImage src={getPostImage(post)} alt={post.title} fill className="object-cover transition duration-500 group-hover:scale-[1.03]" />
+                  </div>
+                  <div className="p-5">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#4a5c54]">{getPostMeta(post).category || 'Story'}</p>
+                    <h3 className={`mt-2 text-lg font-semibold leading-snug ${tone.title}`}>{post.title}</h3>
+                    <p className={`mt-2 text-xs ${tone.muted}`}>{formatPostDate(post)}</p>
+                  </div>
                 </Link>
-              </div>
+              ))}
             </div>
           </div>
         ) : null}
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {supportTasks.slice(0, 3).map((task) => (
-            <Link key={task.key} href={task.route} className={`rounded-[1.8rem] p-6 ${tone.soft}`}>
-              <h3 className="text-xl font-semibold">{task.label}</h3>
-              <p className={`mt-3 text-sm leading-7 ${tone.muted}`}>{task.description}</p>
-            </Link>
-          ))}
+        <div className="mt-20 rounded-[2rem] border border-[#b9d4c9] bg-[#e6f2ee] px-6 py-12 text-center sm:px-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#4a5c54]">{siteContent.footer.ctaTitle}</p>
+          <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-[#2f3f38]">{siteContent.footer.ctaDescription}</p>
+          <Link
+            href={siteContent.footer.ctaButton.href}
+            className={`mt-8 inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-semibold shadow-sm transition hover:-translate-y-0.5 ${tone.action}`}
+          >
+            {siteContent.footer.ctaButton.label}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
     </main>
@@ -490,7 +653,6 @@ export default async function HomePage() {
   ).filter(({ posts }) => posts.length)
 
   const primaryTask = enabledTasks.find((task) => task.key === recipe.primaryTask) || enabledTasks[0]
-  const supportTasks = enabledTasks.filter((task) => task.key !== primaryTask?.key)
   const listingPosts = taskFeed.find(({ task }) => task.key === 'listing')?.posts || []
   const classifiedPosts = taskFeed.find(({ task }) => task.key === 'classified')?.posts || []
   const articlePosts = taskFeed.find(({ task }) => task.key === 'article')?.posts || []
@@ -535,7 +697,7 @@ export default async function HomePage() {
         />
       ) : null}
       {productKind === 'editorial' ? (
-        <EditorialHome primaryTask={primaryTask} articlePosts={articlePosts} supportTasks={supportTasks} />
+        <EditorialHome primaryTask={primaryTask} articlePosts={articlePosts} />
       ) : null}
       {productKind === 'visual' ? (
         <VisualHome primaryTask={primaryTask} imagePosts={imagePosts} profilePosts={profilePosts} articlePosts={articlePosts} />

@@ -26,9 +26,9 @@ const sectionStyles = {
   },
   editorial: {
     section: 'py-16 sm:py-18',
-    heading: 'text-[#2c1d18]',
-    body: 'text-[#735f52]',
-    card: 'border-b border-[rgba(120,76,44,0.16)] pb-6',
+    heading: 'text-[#121c18]',
+    body: 'text-[#4a5c54]',
+    card: 'border-b border-[rgba(72,110,95,0.14)] pb-6',
   },
   studio: {
     section: 'py-16 sm:py-18',

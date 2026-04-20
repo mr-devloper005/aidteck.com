@@ -6,10 +6,13 @@ import { TaskListClient } from '@/components/tasks/task-list-client'
 import { SchemaJsonLd } from '@/components/seo/schema-jsonld'
 import { fetchTaskPosts } from '@/lib/task-data'
 import { SITE_CONFIG, getTaskConfig, type TaskKey } from '@/lib/site-config'
-import { CATEGORY_OPTIONS, normalizeCategory } from '@/lib/categories'
+import { CATEGORY_OPTIONS, normalizeCategory, pickSearchParam } from '@/lib/categories'
 import { taskIntroCopy } from '@/config/site.content'
 import { getFactoryState } from '@/design/factory/get-factory-state'
 import { TASK_LIST_PAGE_OVERRIDE_ENABLED, TaskListPageOverride } from '@/overrides/task-list-page'
+import { Button } from '@/components/ui/button'
+import { editorialCardRadius, editorialPageWrapClass, editorialShellHeroClass } from '@/components/shared/editorial-layout'
+import { cn } from '@/lib/utils'
 
 const taskIcons: Record<TaskKey, any> = {
   listing: Building2,
@@ -27,8 +30,10 @@ const taskIcons: Record<TaskKey, any> = {
 const variantShells = {
   'listing-directory': 'bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.08),transparent_24%),linear-gradient(180deg,#f8fbff_0%,#ffffff_100%)]',
   'listing-showcase': 'bg-[linear-gradient(180deg,#ffffff_0%,#f4f9ff_100%)]',
-  'article-editorial': 'bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.08),transparent_20%),linear-gradient(180deg,#fff8ef_0%,#ffffff_100%)]',
-  'article-journal': 'bg-[linear-gradient(180deg,#fffdf9_0%,#f7f1ea_100%)]',
+  'article-editorial':
+    'bg-[radial-gradient(circle_at_12%_8%,rgba(114,186,169,0.1),transparent_28%),linear-gradient(180deg,#fafcfb_0%,#ffffff_55%,#f4f8f7_100%)]',
+  'article-journal':
+    'bg-[radial-gradient(circle_at_18%_0%,rgba(130,175,155,0.08),transparent_30%),linear-gradient(180deg,#ffffff_0%,#f7faf9_100%)]',
   'image-masonry': 'bg-[linear-gradient(180deg,#09101d_0%,#111c2f_100%)] text-white',
   'image-portfolio': 'bg-[linear-gradient(180deg,#07111f_0%,#13203a_100%)] text-white',
   'profile-creator': 'bg-[linear-gradient(180deg,#0a1120_0%,#101c34_100%)] text-white',
@@ -39,14 +44,21 @@ const variantShells = {
   'sbm-library': 'bg-[linear-gradient(180deg,#f7f8fc_0%,#ffffff_100%)]',
 } as const
 
-export async function TaskListPage({ task, category }: { task: TaskKey; category?: string }) {
+export async function TaskListPage({
+  task,
+  category,
+}: {
+  task: TaskKey
+  category?: string | string[]
+}) {
   if (TASK_LIST_PAGE_OVERRIDE_ENABLED) {
-    return await TaskListPageOverride({ task, category })
+    return await TaskListPageOverride({ task, category: pickSearchParam(category) })
   }
 
   const taskConfig = getTaskConfig(task)
   const posts = await fetchTaskPosts(task, 30)
-  const normalizedCategory = category ? normalizeCategory(category) : 'all'
+  const categoryStr = pickSearchParam(category)
+  const normalizedCategory = categoryStr ? normalizeCategory(categoryStr) : 'all'
   const intro = taskIntroCopy[task]
   const baseUrl = SITE_CONFIG.baseUrl.replace(/\/$/, '')
   const schemaItems = posts.slice(0, 10).map((post, index) => ({
@@ -58,6 +70,7 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
   const { recipe } = getFactoryState()
   const layoutKey = recipe.taskLayouts[task as keyof typeof recipe.taskLayouts] || `${task}-${task === 'listing' ? 'directory' : 'editorial'}`
   const shellClass = variantShells[layoutKey as keyof typeof variantShells] || 'bg-background'
+  const isArticleListLayout = layoutKey === 'article-editorial' || layoutKey === 'article-journal'
   const Icon = taskIcons[task] || LayoutGrid
 
   const isDark = ['image-masonry', 'image-portfolio', 'profile-creator'].includes(layoutKey)
@@ -71,11 +84,11 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
       }
     : layoutKey.startsWith('article') || layoutKey.startsWith('sbm')
       ? {
-          muted: 'text-[#72594a]',
-          panel: 'border border-[#dbc6b6] bg-white/90',
-          soft: 'border border-[#dbc6b6] bg-[#fff8ef]',
-          input: 'border border-[#dbc6b6] bg-white text-[#2f1d16]',
-          button: 'bg-[#2f1d16] text-[#fff4e4] hover:bg-[#452920]',
+          muted: 'text-[#4a5c54]',
+          panel: 'border border-[#b9d4c9] bg-white/95',
+          soft: 'border border-[#cfe5db] bg-[#f1f8f5]',
+          input: 'border border-[#b9d4c9] bg-white text-[#121c18]',
+          button: 'bg-[#121c18] text-white hover:bg-[#24332c]',
         }
       : {
           muted: 'text-slate-600',
@@ -86,9 +99,41 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
         }
 
   return (
-    <div className={`min-h-screen ${shellClass}`}>
+    <div className={cn('min-h-screen', isArticleListLayout ? 'bg-[#f9fcfb]' : shellClass)}>
       <NavbarShell />
-      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      {isArticleListLayout ? (
+        <section className={editorialShellHeroClass}>
+          <div className={`${editorialPageWrapClass} py-10 sm:py-12`}>
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#4a5c54]">{taskConfig?.label || 'News'}</p>
+                <h1 className="mt-2 text-3xl font-bold tracking-tight text-[#121c18] sm:text-4xl">
+                  {taskConfig?.description || 'Latest articles'}
+                </h1>
+                <p className="mt-3 max-w-2xl text-base leading-relaxed text-[#4a5c54]">
+                  Reporting, essays, and explainers in one calm index—use categories to focus the list without changing
+                  underlying routes or data.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Button variant="outline" className="rounded-full border-[#c5ddd4] bg-white px-5" asChild>
+                  <Link href="/search">Search</Link>
+                </Button>
+                <Button className="rounded-full bg-[#121c18] px-6 text-white hover:bg-[#24332c]" asChild>
+                  <Link href="/dashboard/articles/new">Submit article</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+      <main
+        className={
+          isArticleListLayout
+            ? `${editorialPageWrapClass} pb-14 pt-2 sm:pt-4`
+            : 'mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8'
+        }
+      >
         {task === 'listing' ? (
           <SchemaJsonLd
             data={[
@@ -146,26 +191,38 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
           </section>
         ) : null}
 
-        {layoutKey === 'article-editorial' || layoutKey === 'article-journal' ? (
-          <section className="mb-12 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-            <div>
-              <p className={`text-xs uppercase tracking-[0.3em] ${ui.muted}`}>{taskConfig?.label || task}</p>
-              <h1 className="mt-3 max-w-4xl text-5xl font-semibold tracking-[-0.05em] text-foreground">{taskConfig?.description || 'Latest posts'}</h1>
-              <p className={`mt-5 max-w-2xl text-sm leading-8 ${ui.muted}`}>This reading surface uses slower pacing, stronger typographic hierarchy, and more breathing room so long-form content feels intentional rather than squeezed into a generic feed.</p>
+        {isArticleListLayout ? (
+          <section className="mb-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-stretch">
+            <div className={`border border-[#e2ebe8] bg-white p-6 shadow-sm sm:p-8 ${editorialCardRadius}`}>
+              <span className="inline-flex rounded-full border border-[#cfe5db] bg-[#eef6f3] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#24332c]">
+                Reading list
+              </span>
+              <h2 className="mt-4 text-xl font-bold text-[#121c18]">Browse by topic</h2>
+              <p className="mt-2 text-sm leading-relaxed text-[#4a5c54]">
+                Pick a category to focus this page. The same posts and APIs apply—only this view is tuned like the About layout.
+              </p>
             </div>
-            <div className={`rounded-[2rem] p-6 ${ui.panel}`}>
-              <p className={`text-xs font-semibold uppercase tracking-[0.24em] ${ui.muted}`}>Reading note</p>
-              <p className={`mt-4 text-sm leading-7 ${ui.muted}`}>Use category filters to jump between topics without collapsing the page into the same repeated card rhythm used by other task types.</p>
-              <form className="mt-5 flex items-center gap-3" action={taskConfig?.route || '#'}>
-                <select name="category" defaultValue={normalizedCategory} className={`h-11 flex-1 rounded-xl px-3 text-sm ${ui.input}`}>
-                  <option value="all">All categories</option>
-                  {CATEGORY_OPTIONS.map((item) => (
-                    <option key={item.slug} value={item.slug}>{item.name}</option>
-                  ))}
-                </select>
-                <button type="submit" className={`h-11 rounded-xl px-4 text-sm font-medium ${ui.button}`}>Apply</button>
-              </form>
-            </div>
+            <form
+              action={taskConfig?.route || '#'}
+              className={`flex flex-col justify-center gap-4 border border-[#e2ebe8] bg-white p-6 shadow-sm sm:p-8 ${editorialCardRadius}`}
+            >
+              <p className={`text-xs font-semibold uppercase tracking-[0.24em] ${ui.muted}`}>Category</p>
+              <select
+                name="category"
+                defaultValue={normalizedCategory}
+                className={`h-12 w-full rounded-2xl border px-3 text-sm ${ui.input}`}
+              >
+                <option value="all">All categories</option>
+                {CATEGORY_OPTIONS.map((item) => (
+                  <option key={item.slug} value={item.slug}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+              <button type="submit" className={`h-11 rounded-full text-sm font-semibold ${ui.button}`}>
+                Apply filter
+              </button>
+            </form>
           </section>
         ) : null}
 

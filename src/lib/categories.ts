@@ -44,8 +44,17 @@ const allowed = new Set(
 export const isValidCategory = (value: string) =>
   allowed.has(value.trim().toLowerCase());
 
+/** Next.js passes repeated keys as string[]; coerce to a single value */
+export function pickSearchParam(value: string | string[] | undefined | null): string | undefined {
+  if (value == null) return undefined
+  if (Array.isArray(value)) return value[0]
+  return value
+}
+
 export const normalizeCategory = (value: string) => {
+  if (typeof value !== 'string') return 'all'
   const normalized = value.trim().toLowerCase();
+  if (!normalized) return 'all'
   const match = CATEGORY_OPTIONS.find(
     (item) =>
       item.slug.toLowerCase() === normalized ||

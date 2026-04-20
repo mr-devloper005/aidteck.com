@@ -11,6 +11,11 @@ export const generateMetadata = () =>
     description: taskPageMetadata.sbm.description,
   });
 
-export default function SocialBookmarkingPage({ searchParams }: { searchParams?: { category?: string } }) {
-  return <TaskListPage task="sbm" category={searchParams?.category} />;
+export default async function SocialBookmarkingPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ category?: string | string[] }>;
+}) {
+  const sp = (await searchParams) ?? {};
+  return <TaskListPage task="sbm" category={sp.category} />;
 }
