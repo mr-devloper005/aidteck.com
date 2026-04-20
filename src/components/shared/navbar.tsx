@@ -123,7 +123,7 @@ export function Navbar() {
           <div className="flex min-w-0 items-center gap-4">
             <Link href="/" className="flex shrink-0 items-center gap-3">
               <div className={cn('flex h-12 w-12 items-center justify-center overflow-hidden p-1.5', palette.logo)}>
-                <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
+                <img src="/favicon.png?v=20260420" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
               </div>
               <div className="min-w-0 hidden sm:block">
                 <span className="block truncate text-xl font-semibold">{SITE_CONFIG.name}</span>
@@ -215,15 +215,21 @@ export function Navbar() {
   const logoSrc = '/favicon.png?v=20260420'
 
   return (
-    <header className={cn('sticky top-0 z-50 w-full', style.shell)}>
+    <header className={cn('sticky top-0 z-50 w-full', style.shell)} suppressHydrationWarning>
       {isEditorial ? (
-        <nav className="mx-auto grid min-h-[4rem] w-full max-w-6xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6 lg:min-h-[4.25rem] lg:gap-6 lg:px-8">
+        <nav
+          className="mx-auto grid min-h-[4rem] w-full max-w-6xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6 lg:min-h-[4.25rem] lg:gap-6 lg:px-8"
+          suppressHydrationWarning
+        >
           <Link href="/" className="flex min-w-0 shrink-0 items-center gap-2.5">
             <img src={logoSrc} alt="" width={40} height={40} className={style.logo} />
             <span className="truncate font-sans text-lg font-semibold tracking-tight text-neutral-950">{SITE_CONFIG.name}</span>
           </Link>
 
-          <div className="hidden min-w-0 items-center justify-center justify-self-center gap-6 sm:gap-8 lg:flex">
+          <div
+            className="hidden min-w-0 items-center justify-center justify-self-center gap-6 sm:gap-8 lg:flex"
+            suppressHydrationWarning
+          >
             {editorialCenterNav.map((item) => {
               const isActive =
                 item.href === '/'
@@ -244,7 +250,7 @@ export function Navbar() {
             })}
           </div>
 
-          <div className="flex min-w-0 items-center justify-end gap-1 sm:gap-2">
+          <div className="flex min-w-0 items-center justify-end gap-1 sm:gap-2" suppressHydrationWarning>
             <Button variant="ghost" size="icon" asChild className="hidden rounded-full text-neutral-600 hover:bg-black/5 hover:text-neutral-950 md:flex">
               <Link href="/search">
                 <Search className="h-[1.125rem] w-[1.125rem]" />
