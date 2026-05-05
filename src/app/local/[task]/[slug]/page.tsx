@@ -10,6 +10,7 @@ import { TaskImageCarousel } from "@/components/tasks/task-image-carousel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ContentImage } from "@/components/shared/content-image";
+import { ImageLightbox } from "@/components/shared/image-lightbox";
 import { RichContent, formatRichHtml } from "@/components/shared/rich-content";
 import { SITE_CONFIG, type TaskKey } from "@/lib/site-config";
 import { getLocalPostBySlug } from "@/lib/local-posts";
@@ -22,6 +23,9 @@ type PostContent = {
   phone?: string;
   email?: string;
   description?: string;
+  body?: string;
+  excerpt?: string;
+  author?: string;
   highlights?: string[];
   logo?: string;
   images?: string[];
@@ -114,7 +118,7 @@ export default function LocalPostDetailPage() {
         <main className="mx-auto max-w-3xl px-4 py-20 text-center">
           <h1 className="text-2xl font-semibold text-foreground">Post not found</h1>
           <p className="mt-2 text-muted-foreground">
-            This local post isn’t available on this device.
+            This local post is not available on this device.
           </p>
           <Button className="mt-6" asChild>
             <Link href="/">Back home</Link>
@@ -126,12 +130,20 @@ export default function LocalPostDetailPage() {
   }
 
   const category = content.category || post.tags?.[0] || taskConfig.label;
-  const description = content.description || post.summary || "Details coming soon.";
-  const descriptionHtml = formatRichHtml(description, "Details coming soon.");
   const location = content.address || content.location;
   const images = getImageUrls(post, content);
   const isArticle = task === "article";
   const isPdf = task === "pdf";
+  const articleSummary = post.summary || content.excerpt || "";
+  const articleAuthor = content.author || post.authorName || "Editorial Team";
+  const articleDate = post.publishedAt
+    ? new Date(post.publishedAt).toLocaleDateString("en-IN", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
+  const detailHtml = formatRichHtml(content.body || content.description || post.summary, "Details coming soon.");
   const mapEmbedUrl = buildMapEmbedUrl(content.latitude, content.longitude, location);
 
   return (
@@ -146,19 +158,80 @@ export default function LocalPostDetailPage() {
         </Link>
 
         {isArticle ? (
-          <div className="mx-auto w-full max-w-4xl space-y-6">
-            <h1 className="text-4xl font-semibold leading-tight text-foreground">{post.title}</h1>
-            {images[0] ? (
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-border bg-muted">
-                <ContentImage src={images[0]} alt={post.title} fill className="object-cover" intrinsicWidth={1600} intrinsicHeight={900} />
+          <div className="mx-auto w-full max-w-6xl space-y-8">
+            <section className="overflow-hidden rounded-[2rem] border border-[#e6d7c8] bg-[linear-gradient(180deg,#fffaf4_0%,#fffdf9_100%)] shadow-[0_24px_70px_rgba(89,52,24,0.08)]">
+              <div className="grid gap-0 lg:grid-cols-[1.15fr_0.85fr]">
+                <div className="p-7 sm:p-10 lg:p-12">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-[#e6d7c8] bg-white/90 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7d5330]">
+                    <Tag className="h-3.5 w-3.5" />
+                    {category}
+                  </div>
+                  <h1 className="mt-6 max-w-3xl text-4xl font-semibold leading-tight tracking-[-0.05em] text-[#251813] sm:text-5xl">
+                    {post.title}
+                  </h1>
+                  {articleSummary ? (
+                    <p className="mt-5 max-w-2xl text-base leading-8 text-[#6f584b] sm:text-lg">
+                      {articleSummary}
+                    </p>
+                  ) : null}
+                  <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                    <div className="rounded-[1.5rem] border border-[#ecdccf] bg-white/85 p-4">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8f6c59]">
+                        Written by
+                      </p>
+                      <p className="mt-2 text-sm font-semibold text-[#251813]">{articleAuthor}</p>
+                    </div>
+                    <div className="rounded-[1.5rem] border border-[#ecdccf] bg-white/85 p-4">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8f6c59]">
+                        Published
+                      </p>
+                      <p className="mt-2 text-sm font-semibold text-[#251813]">
+                        {articleDate || "Recently updated"}
+                      </p>
+                    </div>
+                    <div className="rounded-[1.5rem] border border-[#ecdccf] bg-white/85 p-4">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8f6c59]">
+                        Topic
+                      </p>
+                      <p className="mt-2 text-sm font-semibold text-[#251813]">{category}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="border-t border-[#ecdccf] bg-[#f7ecdf] p-5 lg:border-l lg:border-t-0 lg:p-6">
+                  {images[0] ? (
+                    <ImageLightbox
+                      src={images[0]}
+                      alt={`${post.title} featured image`}
+                      trigger={
+                        <button
+                          type="button"
+                          className="group relative block aspect-[4/5] w-full overflow-hidden rounded-[1.75rem] border border-[#e6d7c8] bg-[#e9dacb] text-left"
+                          aria-label="Open featured image"
+                        >
+                          <ContentImage
+                            src={images[0]}
+                            alt={post.title}
+                            fill
+                            className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                            intrinsicWidth={1200}
+                            intrinsicHeight={1500}
+                          />
+                        </button>
+                      }
+                    />
+                  ) : null}
+                </div>
               </div>
-            ) : null}
-            <RichContent html={formatRichHtml(description, "Details coming soon.")} />
+            </section>
+
+            <article className="rounded-[2rem] border border-border/70 bg-card/90 p-6 shadow-[0_18px_45px_rgba(15,23,42,0.05)] sm:p-8">
+              <RichContent html={detailHtml} className="leading-8 prose-p:my-6 prose-h2:my-8 prose-h3:my-6 prose-ul:my-6" />
+            </article>
           </div>
         ) : isPdf ? (
           <div className="mx-auto w-full max-w-4xl">
             <h1 className="text-3xl font-semibold text-foreground">{post.title}</h1>
-            <RichContent html={descriptionHtml} className="mt-2 text-sm" />
+            <RichContent html={detailHtml} className="mt-2 text-sm" />
             {content.fileUrl ? (
               <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-white">
                 <iframe
@@ -180,21 +253,27 @@ export default function LocalPostDetailPage() {
           <div className="grid gap-10 lg:grid-cols-[2fr_1fr]">
             <div>
               <TaskImageCarousel images={images} />
-              <div className="mt-6">
-                <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                  <Badge variant="secondary" className="inline-flex items-center gap-1">
-                    <Tag className="h-3.5 w-3.5" />
-                    {category}
-                  </Badge>
-                  {location ? (
-                    <span className="inline-flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {location}
-                    </span>
-                  ) : null}
+              <div className="mt-6 overflow-hidden rounded-[2rem] border border-border/70 bg-card/90 shadow-[0_18px_45px_rgba(15,23,42,0.05)]">
+                <div className="border-b border-border/70 bg-[linear-gradient(180deg,rgba(255,250,244,0.95),rgba(255,255,255,0.88))] p-6 sm:p-8">
+                  <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                    <Badge variant="secondary" className="inline-flex items-center gap-1">
+                      <Tag className="h-3.5 w-3.5" />
+                      {category}
+                    </Badge>
+                    {location ? (
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="h-4 w-4" />
+                        {location}
+                      </span>
+                    ) : null}
+                  </div>
+                  <h1 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
+                    {post.title}
+                  </h1>
                 </div>
-                <h1 className="mt-4 text-3xl font-semibold text-foreground">{post.title}</h1>
-                <RichContent html={descriptionHtml} className="mt-3 max-w-3xl" />
+                <div className="p-6 sm:p-8">
+                  <RichContent html={detailHtml} className="max-w-none" />
+                </div>
               </div>
             </div>
             <div className="space-y-4">

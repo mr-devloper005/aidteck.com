@@ -8,6 +8,14 @@ const escapeHtml = (value: string) =>
     .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
+const decodeHtmlEntities = (value: string) =>
+  value
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&amp;/gi, "&");
+
 const sanitizeRichHtml = (html: string) =>
   html
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
@@ -20,8 +28,14 @@ const sanitizeRichHtml = (html: string) =>
 export const formatRichHtml = (raw?: string | null, fallback = "Details coming soon.") => {
   const source = typeof raw === "string" ? raw.trim() : "";
   if (!source) return `<p>${escapeHtml(fallback)}</p>`;
+  const decodedSource = decodeHtmlEntities(source);
+
   if (/<[a-z][\s\S]*>/i.test(source)) {
     return sanitizeRichHtml(source);
+  }
+
+  if (/<[a-z][\s\S]*>/i.test(decodedSource)) {
+    return sanitizeRichHtml(decodedSource);
   }
 
   return source
