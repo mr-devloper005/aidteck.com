@@ -48,6 +48,10 @@ export default function ContactPage() {
     return <ContactPageOverride />
   }
 
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || `hello@${SITE_CONFIG.domain}`
+  const supportSubject = encodeURIComponent(`Support request for ${SITE_CONFIG.name}`)
+  const mailtoHref = `mailto:${contactEmail}?subject=${supportSubject}`
+
   const { recipe } = getFactoryState()
   const productKind = getProductKind(recipe)
   const tone = getTone(productKind)
@@ -98,6 +102,16 @@ export default function ContactPage() {
 
           <div className={`rounded-[2rem] p-7 ${tone.panel}`}>
             <h2 className="text-2xl font-semibold">Send a message</h2>
+            <div className={`mt-4 rounded-[1.4rem] p-4 ${tone.soft}`}>
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] opacity-70">Email us directly</p>
+              <p className={`mt-2 text-sm leading-7 ${tone.muted}`}>{contactEmail}</p>
+              <a
+                href={mailtoHref}
+                className={`mt-4 inline-flex h-11 items-center justify-center rounded-full px-5 text-sm font-semibold ${tone.action}`}
+              >
+                Email {SITE_CONFIG.name}
+              </a>
+            </div>
             <form className="mt-6 grid gap-4">
               <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Your name" />
               <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Email address" />

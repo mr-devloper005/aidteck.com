@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+DE+SAS:wght@100..400&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -71,9 +72,10 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-manrope), system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-sans: "Playwrite DE SAS", cursive;
+  --font-mono: "Playwrite DE SAS", ui-monospace, monospace;
+  --font-display: "Playwrite DE SAS", cursive;
+  --font-handwriting: "Playwrite DE SAS", cursive;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -126,6 +128,7 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
     min-height: 100vh;
     background-image:
       radial-gradient(circle at top left, rgba(110, 26, 55, 0.09), transparent 32%),
@@ -168,6 +171,10 @@
 }
 
 @layer components {
+  .font-handwriting {
+    font-family: var(--font-handwriting);
+  }
+
   .paper-panel {
     background: linear-gradient(180deg, rgba(255, 252, 247, 0.95), rgba(255, 248, 240, 0.88));
     border: 1px solid rgba(110, 26, 55, 0.12);
@@ -320,6 +327,11 @@ body[data-site-shell="market"] {
 .factory-font-market h3,
 .factory-font-market h4 {
   font-family: var(--font-sans);
+}
+
+.factory-font-directory .font-handwriting,
+.factory-font-market .font-handwriting {
+  font-family: var(--font-handwriting);
 }
 
 .factory-font-studio h1,
