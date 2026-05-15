@@ -1,10 +1,10 @@
 export const siteIdentity = {
   code: process.env.NEXT_PUBLIC_SITE_CODE || 'bnd4acecef',
-  name: process.env.NEXT_PUBLIC_SITE_NAME || 'Aidteck',
+  name: process.env.NEXT_PUBLIC_SITE_NAME || 'aidteck',
   tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'Article platform',
   description:
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION ||
-    'A article site for Aidteck, built for clean discovery and structured publishing.',
+    'A article site for aidteck, built for clean discovery and structured publishing.',
   domain: process.env.NEXT_PUBLIC_SITE_DOMAIN || 'aidteck.com',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://aidteck.com',
   ogImage: process.env.NEXT_PUBLIC_SITE_OG_IMAGE || '/og-default.png',
