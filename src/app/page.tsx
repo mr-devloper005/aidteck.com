@@ -474,7 +474,13 @@ function CurationHome({ primaryTask, bookmarkPosts, profilePosts, articlePosts }
 
 export default async function HomePage() {
   if (HOME_PAGE_OVERRIDE_ENABLED) {
-    return <HomePageOverride />
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <NavbarShell />
+        <HomePageOverride />
+        <Footer />
+      </div>
+    )
   }
 
   const enabledTasks = SITE_CONFIG.tasks.filter((task) => task.enabled)
