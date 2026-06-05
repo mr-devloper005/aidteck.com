@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 const FALLBACK_SITE_CODE = 'bnd4acecef';
 const FALLBACK_SITE_URL = 'https://aidteck.com';
-const FALLBACK_SITE_NAME = 'Aidteck';
+const FALLBACK_SITE_NAME = 'aidteck';
 
 const trimString = (value: unknown) => (typeof value === 'string' ? value.trim() : '');
 

@@ -368,7 +368,7 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                       </p>
                       {taskConfig?.route ? (
                         <Button className="mt-4 w-full" asChild>
-                          <Link href={taskConfig.route}>Browse all {taskConfig.label}</Link>
+                      <Link href={taskConfig.route}>Browse all updates</Link>
                         </Button>
                       ) : null}
                     </div>
@@ -416,7 +416,7 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
 
             {isClassified ? (
               <div className="mx-auto w-full max-w-4xl rounded-2xl border border-border bg-card p-6">
-                <h2 className="text-lg font-semibold text-foreground">Business details</h2>
+                <h2 className="text-lg font-semibold text-foreground">Details</h2>
                 <div className="mt-4 space-y-3 text-sm text-muted-foreground">
                   {content.website ? (
                     <div className="flex items-start gap-2">
@@ -479,7 +479,7 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                 <p className="text-sm font-semibold text-foreground">Location map</p>
                 <div className="mt-4 overflow-hidden rounded-xl border border-border">
                   <iframe
-                    title="Business location map"
+                    title="Location map"
                     src={mapEmbedUrl}
                     className="h-56 w-full"
                     loading="lazy"
@@ -496,7 +496,7 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                   <p className="text-sm font-semibold text-foreground">Location map</p>
                   <div className="mt-4 overflow-hidden rounded-xl border border-border">
                     <iframe
-                      title="Business location map"
+                      title="Location map"
                       src={mapEmbedUrl}
                       className="h-56 w-full"
                       loading="lazy"
