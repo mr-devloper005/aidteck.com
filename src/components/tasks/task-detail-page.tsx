@@ -271,11 +271,6 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                       <h1 className="mt-6 max-w-3xl text-4xl font-semibold leading-tight tracking-[-0.05em] text-[#251813] sm:text-5xl">
                         {post.title}
                       </h1>
-                      {articleSummary ? (
-                        <p className="mt-5 max-w-2xl text-base leading-8 text-[#6f584b] sm:text-lg">
-                          {articleSummary}
-                        </p>
-                      ) : null}
                       <div className="mt-8 grid gap-4 sm:grid-cols-2">
                         <div className="rounded-[1.5rem] border border-[#ecdccf] bg-white/85 p-4">
                           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8f6c59]">
